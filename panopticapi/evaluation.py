@@ -74,7 +74,7 @@ class PQStat():
 
 
 @get_traceback
-def pq_compute_single_core(proc_id, annotation_set, gt_folder, pred_folder, categories):
+def pq_compute_single_core(proc_id, annotation_set, gt_folder, pred_folder, catId2cat):
     pq_stat = PQStat()
 
     idx = 0
@@ -101,7 +101,7 @@ def pq_compute_single_core(proc_id, annotation_set, gt_folder, pred_folder, cate
                 raise KeyError('In the image with ID {} segment with ID {} is presented in PNG and not presented in JSON.'.format(gt_ann['image_id'], label))
             pred_segms[label]['area'] = label_cnt
             pred_labels_set.remove(label)
-            if pred_segms[label]['category_id'] not in categories:
+            if pred_segms[label]['category_id'] not in catId2cat:
                 raise KeyError('In the image with ID {} segment with ID {} has unknown category_id {}.'.format(gt_ann['image_id'], label, pred_segms[label]['category_id']))
         if len(pred_labels_set) != 0:
             raise KeyError('In the image with ID {} the following segment IDs {} are presented in JSON and not presented in PNG.'.format(gt_ann['image_id'], list(pred_labels_set)))
@@ -165,7 +165,7 @@ def pq_compute_single_core(proc_id, annotation_set, gt_folder, pred_folder, cate
     return pq_stat
 
 
-def pq_compute_multi_core(matched_annotations_list, gt_folder, pred_folder, categories):
+def pq_compute_multi_core(matched_annotations_list, gt_folder, pred_folder, catId2cat):
     cpu_num = multiprocessing.cpu_count()
     annotations_split = np.array_split(matched_annotations_list, cpu_num)
     print("Number of cores: {}, images per core: {}".format(cpu_num, len(annotations_split[0])))
@@ -173,7 +173,7 @@ def pq_compute_multi_core(matched_annotations_list, gt_folder, pred_folder, cate
     processes = []
     for proc_id, annotation_set in enumerate(annotations_split):
         p = workers.apply_async(pq_compute_single_core,
-                                (proc_id, annotation_set, gt_folder, pred_folder, categories))
+                                (proc_id, annotation_set, gt_folder, pred_folder, catId2cat))
         processes.append(p)
     pq_stat = PQStat()
     for p in processes:
@@ -193,7 +193,8 @@ def pq_compute(gt_json_file, pred_json_file, gt_folder=None, pred_folder=None):
         gt_folder = gt_json_file.replace('.json', '')
     if pred_folder is None:
         pred_folder = pred_json_file.replace('.json', '')
-    categories = {el['id']: el for el in gt_json['categories']}
+    catId2cat = {cat['id']: cat for cat in gt_json['categories']} # i. 변수명 categories 였는데 내가 catId2cat 으로 바꿈. 의미명확하도록. /21.3.27.0:46.
+    # i. ->참고로, pred_json 은 gt_json 의 "annotation" 만 바꿔서 만들어준거임. 따라서, 나머지 두 key 들인 "categories" 와 "images" 는 gt_json 과 동일함. /21.3.27.0:54.
 
     print("Evaluation panoptic segmentation metrics:")
     print("Ground truth:")
@@ -208,20 +209,20 @@ def pq_compute(gt_json_file, pred_json_file, gt_folder=None, pred_folder=None):
     if not os.path.isdir(pred_folder):
         raise Exception("Folder {} with predicted segmentations doesn't exist".format(pred_folder))
 
-    pred_annotations = {el['image_id']: el for el in pred_json['annotations']}
+    imgId2predAnnotation = {annotation['image_id']: annotation for annotation in pred_json['annotations']} # i. 여기도 변수명 내가 바꿈. /21.3.27.0:48.
     matched_annotations_list = []
     for gt_ann in gt_json['annotations']:
         image_id = gt_ann['image_id']
-        if image_id not in pred_annotations:
+        if image_id not in imgId2predAnnotation:
             raise Exception('no prediction for the image with id: {}'.format(image_id))
-        matched_annotations_list.append((gt_ann, pred_annotations[image_id]))
+        matched_annotations_list.append((gt_ann, imgId2predAnnotation[image_id]))
 
-    pq_stat = pq_compute_multi_core(matched_annotations_list, gt_folder, pred_folder, categories)
+    pq_stat = pq_compute_multi_core(matched_annotations_list, gt_folder, pred_folder, catId2cat)
 
     metrics = [("All", None), ("Things", True), ("Stuff", False)]
     results = {}
     for name, isthing in metrics:
-        results[name], per_class_results = pq_stat.pq_average(categories, isthing=isthing)
+        results[name], per_class_results = pq_stat.pq_average(catId2cat, isthing=isthing)
         if name == 'All':
             results['per_class'] = per_class_results
     print("{:10s}| {:>5s}  {:>5s}  {:>5s} {:>5s}".format("", "PQ", "SQ", "RQ", "N"))

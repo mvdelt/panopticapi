@@ -75,6 +75,9 @@ class PQStat():
 
 @get_traceback
 def pq_compute_single_core(proc_id, annotation_set, gt_folder, pred_folder, catId2cat):
+
+    print('jjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjj')
+
     pq_stat = PQStat()
 
     idx = 0

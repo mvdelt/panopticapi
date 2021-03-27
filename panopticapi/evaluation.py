@@ -144,10 +144,12 @@ def pq_compute_single_core(proc_id, annotation_set, gt_folder, pred_folder, catI
             # i.21.3.27.20:29) 이게 기존코드.
             # union =  gt_id2segInfo[gt_label]['area'] + pred_id2segInfo[pred_label]['area'] - intersection - gt_pred_map.get((VOID, pred_label), 0)
                                  
-            # i. (1) 일단 내플젝 시각화버전(백그라운드도 foreground 클래스중 하나로 프레딕션)의 경우. VOID 없으니까 관련항 없애줬음.
-            #  아마 기존에 이 항(gt_pred_map.get((VOID, pred_label), 0)) 을 빼줬기때매 stuff 의 PQ 가 480.9 로 100초과하는 말도안되는 값이 나왔을것으로 생각됨. /21.3.27.20:23.
+            # i. (1) 일단 내플젝 시각화버전(백그라운드도 foreground 클래스중 하나로 프레딕션)을 이밸류에이션하는 경우. VOID 없으니까 관련항 없애줬음.
+            #  아마 기존에 이 항(gt_pred_map.get((VOID, pred_label), 0)) 을 빼줬기때매 stuff 의 PQ 가 480.9 로 100초과하는 말도안되는 값이 나왔을것으로 생각됨!! 
+            #  -> 맞는듯. 이렇게 수정해주니 stuff 의 PQ 값 480.9 였던게 83.783 로 바꼈음. /21.3.27.20:23.
             union =  gt_id2segInfo[gt_label]['area'] + pred_id2segInfo[pred_label]['area'] - intersection  
-            # i. TODO (2) 내플젝 이밸류에이션버전(foreground 클래스 선택지에 백그라운드 없는버전)의 경우, 위의 기존코드 그대로 사용하면 될듯.
+            # i. TODO (2) 내플젝 이밸류에이션버전(foreground 클래스 선택지에 백그라운드 없는버전)을 이밸류에이션하는 경우,
+            #  위에 코멘트아웃해둔 기존코드를 다시 사용하면 될듯. 백그라운드(VOID)를 다른카테고리로 프레딕션한건 점수깎지말아야하니까(union 에서 빼줌). /21.3.27.20:23. 
 
             
             iou = intersection / union

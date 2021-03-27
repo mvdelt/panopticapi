@@ -189,7 +189,7 @@ def pq_compute_multi_core(matched_annotations_list, gt_folder, pred_folder, catI
     with contextlib.redirect_stdout(ioJ):
         for p in processes:
             pq_stat += p.get()
-    print(f'j) got stdout: \n{ioJ.getvalue()}') 
+    print(f'j) got stdout............: \n{ioJ.getvalue()}') 
 
 
     return pq_stat

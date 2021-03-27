@@ -184,7 +184,7 @@ def pq_compute_multi_core(matched_annotations_list, gt_folder, pred_folder, catI
     # for p in processes:
     #     pq_stat += p.get()
 
-
+    import io, contextlib
     ioJ = io.StringIO()
     with contextlib.redirect_stdout(ioJ):
         for p in processes:

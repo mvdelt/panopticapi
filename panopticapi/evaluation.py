@@ -204,6 +204,8 @@ def pq_compute(gt_json_file, pred_json_file, gt_folder=None, pred_folder=None):
     print("\tSegmentation folder: {}".format(pred_folder))
     print("\tJSON file: {}".format(pred_json_file))
 
+    print('j) 테스트!!! 지금이거 with contextlib.redirect_stdout(io.StringIO()): 안에서 실행되는데, 혹시 print출력된게 어딘가에서 나오나 보려고.')
+
     if not os.path.isdir(gt_folder):
         raise Exception("Folder {} with ground truth segmentations doesn't exist".format(gt_folder))
     if not os.path.isdir(pred_folder):

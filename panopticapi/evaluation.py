@@ -88,21 +88,22 @@ def pq_compute_single_core(proc_id, annotation_set, gt_folder, pred_folder, catI
         pan_pred = np.array(Image.open(os.path.join(pred_folder, pred_ann['file_name'])), dtype=np.uint32)
         pan_pred = rgb2id(pan_pred)
 
-        gt_segms = {el['id']: el for el in gt_ann['segments_info']}
-        pred_segms = {el['id']: el for el in pred_ann['segments_info']}
+        gt_id2segInfo = {segInfo['id']: segInfo for segInfo in gt_ann['segments_info']} 
+        pred_id2segInfo = {segInfo['id']: segInfo for segInfo in pred_ann['segments_info']} 
 
         # predicted segments area calculation + prediction sanity checks
-        pred_labels_set = set(el['id'] for el in pred_ann['segments_info'])
+        pred_labels_set = set(segInfo['id'] for segInfo in pred_ann['segments_info'])
         labels, labels_cnt = np.unique(pan_pred, return_counts=True)
         for label, label_cnt in zip(labels, labels_cnt):
-            if label not in pred_segms:
+            if label not in pred_id2segInfo: # i. 내플젝에선 이 if문 실행 안될거임. /21.3.27.17:22.
                 if label == VOID:
                     continue
                 raise KeyError('In the image with ID {} segment with ID {} is presented in PNG and not presented in JSON.'.format(gt_ann['image_id'], label))
-            pred_segms[label]['area'] = label_cnt
+            print(f"j) pred_id2segInfo[label]: {pred_id2segInfo[label]}") # i. 디버깅. /21.3.27.17:47.
+            pred_id2segInfo[label]['area'] = label_cnt
             pred_labels_set.remove(label)
-            if pred_segms[label]['category_id'] not in catId2cat:
-                raise KeyError('In the image with ID {} segment with ID {} has unknown category_id {}.'.format(gt_ann['image_id'], label, pred_segms[label]['category_id']))
+            if pred_id2segInfo[label]['category_id'] not in catId2cat:
+                raise KeyError('In the image with ID {} segment with ID {} has unknown category_id {}.'.format(gt_ann['image_id'], label, pred_id2segInfo[label]['category_id']))
         if len(pred_labels_set) != 0:
             raise KeyError('In the image with ID {} the following segment IDs {} are presented in JSON and not presented in PNG.'.format(gt_ann['image_id'], list(pred_labels_set)))
 
@@ -120,26 +121,26 @@ def pq_compute_single_core(proc_id, annotation_set, gt_folder, pred_folder, catI
         pred_matched = set()
         for label_tuple, intersection in gt_pred_map.items():
             gt_label, pred_label = label_tuple
-            if gt_label not in gt_segms:
+            if gt_label not in gt_id2segInfo:
                 continue
-            if pred_label not in pred_segms:
+            if pred_label not in pred_id2segInfo:
                 continue
-            if gt_segms[gt_label]['iscrowd'] == 1:
+            if gt_id2segInfo[gt_label]['iscrowd'] == 1:
                 continue
-            if gt_segms[gt_label]['category_id'] != pred_segms[pred_label]['category_id']:
+            if gt_id2segInfo[gt_label]['category_id'] != pred_id2segInfo[pred_label]['category_id']:
                 continue
 
-            union = pred_segms[pred_label]['area'] + gt_segms[gt_label]['area'] - intersection - gt_pred_map.get((VOID, pred_label), 0)
+            union = pred_id2segInfo[pred_label]['area'] + gt_id2segInfo[gt_label]['area'] - intersection - gt_pred_map.get((VOID, pred_label), 0)
             iou = intersection / union
             if iou > 0.5:
-                pq_stat[gt_segms[gt_label]['category_id']].tp += 1
-                pq_stat[gt_segms[gt_label]['category_id']].iou += iou
+                pq_stat[gt_id2segInfo[gt_label]['category_id']].tp += 1
+                pq_stat[gt_id2segInfo[gt_label]['category_id']].iou += iou
                 gt_matched.add(gt_label)
                 pred_matched.add(pred_label)
 
         # count false positives
         crowd_labels_dict = {}
-        for gt_label, gt_info in gt_segms.items():
+        for gt_label, gt_info in gt_id2segInfo.items():
             if gt_label in gt_matched:
                 continue
             # crowd segments are ignored
@@ -149,7 +150,7 @@ def pq_compute_single_core(proc_id, annotation_set, gt_folder, pred_folder, catI
             pq_stat[gt_info['category_id']].fn += 1
 
         # count false positives
-        for pred_label, pred_info in pred_segms.items():
+        for pred_label, pred_info in pred_id2segInfo.items():
             if pred_label in pred_matched:
                 continue
             # intersection of the segment with VOID

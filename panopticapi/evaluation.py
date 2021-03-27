@@ -73,10 +73,10 @@ class PQStat():
         return {'pq': pq / n, 'sq': sq / n, 'rq': rq / n, 'n': n}, per_class_results
 
 
-# @get_traceback    # i.21.3.27.18:44) <-이 데코레이션때매 print 출력안되는건가싶어서 잠시 코멘트아웃.
+@get_traceback    # i.21.3.27.18:44) <-이 데코레이션때매 이함수내에서 print 출력안되는건가싶어서 잠시 코멘트아웃. ->그래도출력안되네. /21.3.27.18:49. 
 def pq_compute_single_core(proc_id, annotation_set, gt_folder, pred_folder, catId2cat):
 
-    print('jjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjj')
+    print('jjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjj', flush=True)
 
     pq_stat = PQStat()
 

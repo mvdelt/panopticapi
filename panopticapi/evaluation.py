@@ -79,7 +79,8 @@ def pq_compute_single_core(proc_id, annotation_set, gt_folder, pred_folder, catI
         
     print('jjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjj', flush=True)
     print('yyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyy')
-    sys.stdout.flush()
+    sys.stdout.flush() # i. 이것도해보고 뭐 어케해도 코랩 셀에서 출력이 안되네...;;/21.3.27.19:23.
+
 
     pq_stat = PQStat()
 
@@ -102,9 +103,11 @@ def pq_compute_single_core(proc_id, annotation_set, gt_folder, pred_folder, catI
         labels, labels_cnt = np.unique(pan_pred, return_counts=True)
         for label, label_cnt in zip(labels, labels_cnt):
             if label not in pred_id2segInfo: # i. 내플젝에선 이 if문 실행 안될거임. /21.3.27.17:22.
+                raise KeyError("j) 내플젝에선 이것이 프린트되지 않을거임!!!!!!!") # i. 디버깅. /21.3.27.17:47.
                 if label == VOID:
                     continue
                 raise KeyError('In the image with ID {} segment with ID {} is presented in PNG and not presented in JSON.'.format(gt_ann['image_id'], label))
+            raise KeyError(f"j) pred_id2segInfo[label]: {pred_id2segInfo[label]}") # i. 디버깅. /21.3.27.17:47.
             print(f"j) pred_id2segInfo[label]: {pred_id2segInfo[label]}") # i. 디버깅. /21.3.27.17:47.
             pred_id2segInfo[label]['area'] = label_cnt
             pred_labels_set.remove(label)
@@ -187,6 +190,8 @@ def pq_compute_multi_core(matched_annotations_list, gt_folder, pred_folder, catI
     # for p in processes:
     #     pq_stat += p.get()
 
+    # i. pq_compute_single_core 함수 내에서 print 하는게 출력이 안돼서, 바로위 두줄(for문) 을
+    #  이렇게 바꿔서도 해봣는데, 그래도 안되네. /21.3.27.19:24.
     import io, contextlib
     ioJ = io.StringIO()
     with contextlib.redirect_stdout(ioJ):

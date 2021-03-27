@@ -76,7 +76,10 @@ class PQStat():
 @get_traceback    # i.21.3.27.18:44) <-이 데코레이션때매 이함수내에서 print 출력안되는건가싶어서 잠시 코멘트아웃. ->그래도출력안되네. /21.3.27.18:49. 
 def pq_compute_single_core(proc_id, annotation_set, gt_folder, pred_folder, catId2cat):
 
+        
     print('jjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjj', flush=True)
+    print('yyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyy')
+    sys.stdout.flush()
 
     pq_stat = PQStat()
 
@@ -189,7 +192,7 @@ def pq_compute_multi_core(matched_annotations_list, gt_folder, pred_folder, catI
     with contextlib.redirect_stdout(ioJ):
         for p in processes:
             pq_stat += p.get()
-    print(f'j) got stdout............: \n{ioJ.getvalue()}') 
+    print(f'j) got stdout............: \n{ioJ.getvalue()}')  # i. 아무것도 출력 안됨. /21.3.27.19:02.
 
 
     return pq_stat

@@ -103,13 +103,11 @@ def pq_compute_single_core(proc_id, annotation_set, gt_folder, pred_folder, catI
         labels, labels_cnt = np.unique(pan_pred, return_counts=True)
         for label, label_cnt in zip(labels, labels_cnt):
             if label not in pred_id2segInfo: # i. 내플젝에선 이 if문 실행 안될거임. /21.3.27.17:22.
-                raise KeyError("j) 내플젝에선 이것이 프린트되지 않을거임!!!!!!!") # i. 디버깅. /21.3.27.17:47.
+                raise KeyError("j) 내플젝에선 이것이 프린트되지 않을거임!!!!!!!") # i. 디버깅. /21.3.27.19:28.
                 if label == VOID:
                     continue
                 raise KeyError('In the image with ID {} segment with ID {} is presented in PNG and not presented in JSON.'.format(gt_ann['image_id'], label))
-            raise KeyError(f"j) pred_id2segInfo[label]: {pred_id2segInfo[label]}") # i. 디버깅. /21.3.27.17:47.
-            print(f"j) pred_id2segInfo[label]: {pred_id2segInfo[label]}") # i. 디버깅. /21.3.27.17:47.
-            pred_id2segInfo[label]['area'] = label_cnt
+            pred_id2segInfo[label]['area'] = label_cnt  # i. pred_id2segInfo[label] ex:  {'id': 0, 'category_id': 0}  (여기에 이제 'area' 도 넣어주는거지.) /21.3.27.19:33.
             pred_labels_set.remove(label)
             if pred_id2segInfo[label]['category_id'] not in catId2cat:
                 raise KeyError('In the image with ID {} segment with ID {} has unknown category_id {}.'.format(gt_ann['image_id'], label, pred_id2segInfo[label]['category_id']))
@@ -131,10 +129,13 @@ def pq_compute_single_core(proc_id, annotation_set, gt_folder, pred_folder, catI
         for label_tuple, intersection in gt_pred_map.items():
             gt_label, pred_label = label_tuple
             if gt_label not in gt_id2segInfo:
+                raise KeyError("j) 내플젝에선 이것이 프린트되지 않을거임!!!!!!!") # i. 디버깅. /21.3.27.20:03.
                 continue
             if pred_label not in pred_id2segInfo:
+                raise KeyError("j) 내플젝에선 이것이 프린트되지 않을거임!!!!!!!") # i. 디버깅. /21.3.27.20:03.
                 continue
             if gt_id2segInfo[gt_label]['iscrowd'] == 1:
+                raise KeyError("j) 내플젝에선 이것이 프린트되지 않을거임!!!!!!!") # i. 디버깅. /21.3.27.20:04.
                 continue
             if gt_id2segInfo[gt_label]['category_id'] != pred_id2segInfo[pred_label]['category_id']:
                 continue

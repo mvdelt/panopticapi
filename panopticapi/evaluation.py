@@ -187,18 +187,17 @@ def pq_compute_multi_core(matched_annotations_list, gt_folder, pred_folder, catI
         processes.append(p)
     pq_stat = PQStat()
 
-    # for p in processes:
-    #     pq_stat += p.get()
+    for p in processes:
+        pq_stat += p.get()
 
-    # i. pq_compute_single_core 함수 내에서 print 하는게 출력이 안돼서, 바로위 두줄(for문) 을
-    #  이렇게 바꿔서도 해봣는데, 그래도 안되네. /21.3.27.19:24.
-    import io, contextlib
-    ioJ = io.StringIO()
-    with contextlib.redirect_stdout(ioJ):
-        for p in processes:
-            pq_stat += p.get()
-    print(f'j) got stdout............: \n{ioJ.getvalue()}')  # i. 아무것도 출력 안됨. /21.3.27.19:02.
-
+    # # i. pq_compute_single_core 함수 내에서 print 하는게 출력이 안돼서, 바로위 두줄(for문) 을
+    # #  이렇게 바꿔서도 해봣는데, 그래도 안되네. /21.3.27.19:24.
+    # import io, contextlib
+    # ioJ = io.StringIO()
+    # with contextlib.redirect_stdout(ioJ):
+    #     for p in processes:
+    #         pq_stat += p.get()
+    # print(f'j) got stdout............: \n{ioJ.getvalue()}')  # i. 아무것도 출력 안됨. /21.3.27.19:02.
 
     return pq_stat
 

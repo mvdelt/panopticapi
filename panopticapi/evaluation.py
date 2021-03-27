@@ -180,8 +180,18 @@ def pq_compute_multi_core(matched_annotations_list, gt_folder, pred_folder, catI
                                 (proc_id, annotation_set, gt_folder, pred_folder, catId2cat))
         processes.append(p)
     pq_stat = PQStat()
-    for p in processes:
-        pq_stat += p.get()
+
+    # for p in processes:
+    #     pq_stat += p.get()
+
+
+    ioJ = io.StringIO()
+    with contextlib.redirect_stdout(ioJ):
+        for p in processes:
+            pq_stat += p.get()
+    print(f'j) got stdout: \n{ioJ.getvalue()}') 
+
+
     return pq_stat
 
 

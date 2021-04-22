@@ -238,7 +238,7 @@ def pq_compute(gt_json_file, pred_json_file, gt_folder=None, pred_folder=None):
     print("\tJSON file: {}".format(pred_json_file))
 
     print('j) 테스트!!! 지금이거 with contextlib.redirect_stdout(io.StringIO()): 안에서 실행되는데, 혹시 print출력된게 어딘가에서 나오나 보려고.')
-    # i.21.4.22.17:51) ->바로위한줄 포함, 아래의 print 들 죄다 코랩 출력화면(이밸류에이션결과 출력화면)에 다 프린트됨. 
+    # i.21.4.22.17:51) ->바로위한줄 포함, 아래의 print 들 죄다 코랩 출력화면(이밸류에이션결과 출력화면)에 다 프린트됨.  
 
     if not os.path.isdir(gt_folder):
         raise Exception("Folder {} with ground truth segmentations doesn't exist".format(gt_folder))

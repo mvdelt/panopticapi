@@ -262,7 +262,8 @@ def pq_compute(gt_json_file, pred_json_file, gt_folder=None, pred_folder=None):
         if name == 'All':
             results['per_class'] = per_class_results   # i.21.4.24.1:10) per_class_results[label] = {'pq': pq_class, 'sq': sq_class, 'rq': rq_class} 
     print("{:10s}| {:>5s}  {:>5s}  {:>5s} {:>5s}".format("", "PQ", "SQ", "RQ", "N"))
-    print("-" * (10 + 7 * 4))
+    # print("-" * (10 + 7 * 4))
+    print("-" * (10 + 12 * 4)) # i.21.4.24.2:14).
 
     # i.21.4.24.1:55) 바로아래에 내가 프린트하는코드 새로만들어줘서, 이건 잠시 코멘트아웃. 
     # for name, _isthing in metrics:
@@ -285,7 +286,7 @@ def pq_compute(gt_json_file, pred_json_file, gt_folder=None, pred_folder=None):
     #  COCO       에서는  category,   supercategory.  
     #  cityscapes 에서는  label,      category. 
     for gubunJ, printNameJ in [('Things', 'THINGS'), ('Stuff', 'STUFF'), ('All', 'ALL')]:
-        print("{:10s}| {:5.1f}  {:5.1f}  {:5.1f} {:5d}".format(
+        print("{:10s}| {:5.3f}  {:5.3f}  {:5.3f} {:5d}".format(
             printNameJ,
             100 * results[gubunJ]['pq'],
             100 * results[gubunJ]['sq'],
@@ -301,7 +302,7 @@ def pq_compute(gt_json_file, pred_json_file, gt_folder=None, pred_folder=None):
                 if cat['isthing'] == 1: continue
             else:
                 break
-            print("{:10s}| {:5.1f}  {:5.1f}  {:5.1f} {:5s}".format(
+            print("{:10s}| {:5.3f}  {:5.3f}  {:5.3f} {:5s}".format(
                 cat['name'] if len(cat['name'])<10 else cat['name'][:10], 
                 per_cls_resultsJ[catId]['pq'],
                 per_cls_resultsJ[catId]['sq'],

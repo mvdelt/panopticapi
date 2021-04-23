@@ -277,6 +277,7 @@ def pq_compute(gt_json_file, pred_json_file, gt_folder=None, pred_folder=None):
 
     ########################################################################
     # i.21.4.24.1:15) PQ, SQ, RQ 를 모든 각각의 클래스에 대해서 출력해줘보려고 바로 위 프린트코드 복붙해서 수정해주려함. 
+    #  ->잘 됨. 줄맞춤이 좀 안맞긴한데 암튼 출력될건 다 출력됨. 
     catId2cat
     per_cls_resultsJ = results['per_class']
     # i.21.4.24.1:27) 참고로 여기서 catId 에서 cat 은 COCO 형식에서의 카테고리 즉 클래스를 의미하는거임.

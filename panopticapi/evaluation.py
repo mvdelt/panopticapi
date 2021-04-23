@@ -301,7 +301,7 @@ def pq_compute(gt_json_file, pred_json_file, gt_folder=None, pred_folder=None):
                 if cat['isthing'] == 1: continue
             else:
                 break
-            print("{:10s}| {:5.1f}  {:5.1f}  {:5.1f} {:5d}".format(
+            print("{:10s}| {:5.1f}  {:5.1f}  {:5.1f} {:5s}".format(
                 cat['name'],
                 per_cls_resultsJ[catId]['pq'],
                 per_cls_resultsJ[catId]['sq'],

@@ -238,7 +238,7 @@ def pq_compute(gt_json_file, pred_json_file, gt_folder=None, pred_folder=None):
     print("\tJSON file: {}".format(pred_json_file))
 
     print('j) 테스트!!! 지금이거 with contextlib.redirect_stdout(io.StringIO()): 안에서 실행되는데, 혹시 print출력된게 어딘가에서 나오나 보려고.')
-    # i.21.4.22.17:51) ->바로위한줄 포함, 아래의 print 들 죄다 코랩 출력화면(이밸류에이션결과 출력화면)에 다 프린트됨.  
+    # i.21.4.22.17:51) ->이거포함, 지금 이 pq_compute 함수의 모든 print 들 죄다 코랩 출력화면(이밸류에이션결과 출력화면)에 다 프린트됨. 
 
     if not os.path.isdir(gt_folder):
         raise Exception("Folder {} with ground truth segmentations doesn't exist".format(gt_folder))
@@ -260,7 +260,7 @@ def pq_compute(gt_json_file, pred_json_file, gt_folder=None, pred_folder=None):
     for name, isthing in metrics:
         results[name], per_class_results = pq_stat.pq_average(catId2cat, isthing=isthing)
         if name == 'All':
-            results['per_class'] = per_class_results
+            results['per_class'] = per_class_results   # i.21.4.24.1:10) per_class_results[label] = {'pq': pq_class, 'sq': sq_class, 'rq': rq_class} 
     print("{:10s}| {:>5s}  {:>5s}  {:>5s} {:>5s}".format("", "PQ", "SQ", "RQ", "N"))
     print("-" * (10 + 7 * 4))
 
@@ -272,6 +272,45 @@ def pq_compute(gt_json_file, pred_json_file, gt_folder=None, pred_folder=None):
             100 * results[name]['rq'],
             results[name]['n'])
         )
+
+    ########################################################################
+    # i.21.4.24.1:15) PQ, SQ, RQ 를 모든 각각의 클래스에 대해서 출력해줘보려고 바로 위 프린트코드 복붙해서 수정해주려함. 
+    catId2cat
+    per_cls_resultsJ = results['per_class']
+    # i.21.4.24.1:27) 참고로 여기서 catId 에서 cat 은 COCO 형식에서의 카테고리 즉 클래스를 의미하는거임.
+    #  cityscapes 에서는 'category' 라는 표현이 클래스가 아니고, 클래스를 다시 분류한, 즉 COCO형식에서의 '슈퍼카테고리'를 의미함. 
+    #  정리하면, 
+    #                    <클래스>     <수퍼클래스>
+    #  COCO       에서는  category,   supercategory.  
+    #  cityscapes 에서는  label,      category. 
+    for gubunJ, printNameJ in [('Things', 'THINGS'), ('Stuff', 'STUFF'), ('All', 'ALL')]:
+        print("{:10s}| {:5.1f}  {:5.1f}  {:5.1f} {:5d}".format(
+            printNameJ,
+            100 * results[gubunJ]['pq'],
+            100 * results[gubunJ]['sq'],
+            100 * results[gubunJ]['rq'],
+            results[gubunJ]['n'])
+        )
+        for catId, cat in catId2cat.items(): 
+            # i.21.4.24.1:36) 참고로 지금 여기서 cat 은 COCO형식에서의 파놉틱세그멘테이션 gt 를 구성하는 어노json과 png 중에서
+            #  어노json 의 'categories' 리스트의 한 원소 dict 임. 
+            if gubunJ == 'Things':
+                if cat['isthing'] != 1: continue
+            elif gubunJ == 'Stuff':
+                if cat['isthing'] == 1: continue
+            else:
+                break
+            print("{:10s}| {:5.1f}  {:5.1f}  {:5.1f} {:5d}".format(
+                cat['name'],
+                per_cls_resultsJ[catId]['pq'],
+                per_cls_resultsJ[catId]['sq'],
+                per_cls_resultsJ[catId]['rq'],
+                '-')
+            )
+
+    ########################################################################
+    
+    
 
     t_delta = time.time() - start_time
     print("Time elapsed: {:0.2f} seconds".format(t_delta))

@@ -264,14 +264,15 @@ def pq_compute(gt_json_file, pred_json_file, gt_folder=None, pred_folder=None):
     print("{:10s}| {:>5s}  {:>5s}  {:>5s} {:>5s}".format("", "PQ", "SQ", "RQ", "N"))
     print("-" * (10 + 7 * 4))
 
-    for name, _isthing in metrics:
-        print("{:10s}| {:5.1f}  {:5.1f}  {:5.1f} {:5d}".format(
-            name,
-            100 * results[name]['pq'],
-            100 * results[name]['sq'],
-            100 * results[name]['rq'],
-            results[name]['n'])
-        )
+    # i.21.4.24.1:55) 바로아래에 내가 프린트하는코드 새로만들어줘서, 이건 잠시 코멘트아웃. 
+    # for name, _isthing in metrics:
+    #     print("{:10s}| {:5.1f}  {:5.1f}  {:5.1f} {:5d}".format(
+    #         name,
+    #         100 * results[name]['pq'],
+    #         100 * results[name]['sq'],
+    #         100 * results[name]['rq'],
+    #         results[name]['n'])
+    #     )
 
     ########################################################################
     # i.21.4.24.1:15) PQ, SQ, RQ 를 모든 각각의 클래스에 대해서 출력해줘보려고 바로 위 프린트코드 복붙해서 수정해주려함. 

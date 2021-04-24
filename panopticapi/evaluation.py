@@ -263,7 +263,7 @@ def pq_compute(gt_json_file, pred_json_file, gt_folder=None, pred_folder=None):
             results['per_class'] = per_class_results   # i.21.4.24.1:10) per_class_results[label] = {'pq': pq_class, 'sq': sq_class, 'rq': rq_class} 
     print("{:10s}| {:>5s}  {:>5s}  {:>5s} {:>5s}".format("", "PQ", "SQ", "RQ", "N"))
     # print("-" * (10 + 7 * 4))
-    print("-" * (10 + 12 * 4)) # i.21.4.24.2:14).
+    print("-" * (10 + 10 * 4)) # i.21.4.24.2:14).
 
     # i.21.4.24.1:55) 바로아래에 내가 프린트하는코드 새로만들어줘서, 이건 잠시 코멘트아웃. 
     # for name, _isthing in metrics:
@@ -286,14 +286,7 @@ def pq_compute(gt_json_file, pred_json_file, gt_folder=None, pred_folder=None):
     #                    <클래스>     <수퍼클래스>
     #  COCO       에서는  category,   supercategory.  
     #  cityscapes 에서는  label,      category. 
-    for gubunJ, printNameJ in [('Things', 'THINGS'), ('Stuff', 'STUFF'), ('All', 'ALL')]:
-        print("{:10s}| {:5.3f}  {:5.3f}  {:5.3f} {:5d}".format(
-            printNameJ,
-            100 * results[gubunJ]['pq'],
-            100 * results[gubunJ]['sq'],
-            100 * results[gubunJ]['rq'],
-            results[gubunJ]['n'])
-        )
+    for gubunIdx, (gubunJ, printNameJ) in enumerate([('Things', 'THINGS'), ('Stuff', 'STUFF'), ('All', 'ALL')]):
         for catId, cat in catId2cat.items(): 
             # i.21.4.24.1:36) 참고로 지금 여기서 cat 은 COCO형식에서의 파놉틱세그멘테이션 gt 를 구성하는 어노json과 png 중에서
             #  어노json 의 'categories' 리스트의 한 원소 dict 임. 
@@ -308,8 +301,18 @@ def pq_compute(gt_json_file, pred_json_file, gt_folder=None, pred_folder=None):
                 100 * per_cls_resultsJ[catId]['pq'],
                 100 * per_cls_resultsJ[catId]['sq'],
                 100 * per_cls_resultsJ[catId]['rq'],
-                '-') 
+                '    -') 
             )
+        if gubunIdx != 2:
+            print("-" * (10 + 10 * 4))
+        print("{:10s}| {:5.3f}  {:5.3f}  {:5.3f} {:5d}".format(
+            printNameJ,
+            100 * results[gubunJ]['pq'],
+            100 * results[gubunJ]['sq'],
+            100 * results[gubunJ]['rq'],
+            results[gubunJ]['n'])
+        )
+        print("-" * (10 + 10 * 4))
 
     ########################################################################
     

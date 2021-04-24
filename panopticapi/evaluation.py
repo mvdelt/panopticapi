@@ -305,10 +305,10 @@ def pq_compute(gt_json_file, pred_json_file, gt_folder=None, pred_folder=None):
                 break
             print("{:10s}| {:5.3f}  {:5.3f}  {:5.3f} {:5s}".format(
                 cat['name'] if len(cat['name'])<10 else cat['name'][:10], 
-                per_cls_resultsJ[catId]['pq'],
-                per_cls_resultsJ[catId]['sq'],
-                per_cls_resultsJ[catId]['rq'],
-                '-')
+                100 * per_cls_resultsJ[catId]['pq'],
+                100 * per_cls_resultsJ[catId]['sq'],
+                100 * per_cls_resultsJ[catId]['rq'],
+                '-') 
             )
 
     ########################################################################
